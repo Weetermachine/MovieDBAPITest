@@ -4,10 +4,8 @@ import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.runner.RunWith;
 import org.junit.*;
 import com.google.gson.*;
-import org.junit.runners.JUnit4;
 
 
 import java.io.BufferedReader;
@@ -34,6 +32,15 @@ public class MovieDbAPITest {
      * This is the basic API test with a valid API token, which is the only required field.
      * Due to this being date based, I can only really shallow test this at this point,
      * as providing no dates defaults it to the last 24 hours.
+     * Steps:
+     * 1. Build the URL for person 1245 (Scarlett Johansson) with a valid API Token
+     * 2. Execute the request
+     * 3. Check to make sure a response code of 200 was received
+     * 4. Verifies that the result contains the "changes" key
+     * 5. If "changes" item is not empty, checks to make sure it contains a "key" object in the response
+     *
+     * Expected Results:
+     * Server responds with a 200 status key for Success, and that there is a "changes" key in the results.
      */
     @Test
     public void basicAPIRequiredFields()
@@ -86,6 +93,18 @@ public class MovieDbAPITest {
 
     }
 
+    /**
+     * This check uses an invalid person ID and checks to make sure a successful response is still given, and that the changes key is empty.
+     * Steps:
+     * 1. Builds the URL with an invalid person ID and a valid Token Param
+     * 2. Executes the query
+     * 3. Checks to make sure a status of 200 was received
+     * 4. Checks to make sure a "changes" key was received
+     * 5. Checks to make sure the response, besides the changes key, was empty
+     *
+     * Expected Result:
+     * A 200 successful response rate was received, and a changes key exists, but the rest of the response is empty.
+     */
     @Test
     public void invalidPersonIDTest()
     {
@@ -126,6 +145,17 @@ public class MovieDbAPITest {
 
     }
 
+    /**
+     * This test checks to make sure an error is given when an invalid API key is passed with the request that is the same length
+     * as a valid API token.
+     *
+     * Steps:
+     * 1. Create the URL with an invalid API token of the same length
+     * 2. Execute the reponse
+     * 3. Verify that an error response of 401 was returned by the server
+     *
+     * Expected Result: An error code of 401 was returned
+     */
     @Test
     public void invalidAPIToken()
     {
@@ -148,6 +178,17 @@ public class MovieDbAPITest {
 
     }
 
+    /**
+     * This test checks to make sure an error is given when an invalid API key is passed with the request that is shorter in length
+     * than a valid API token.
+     *
+     * Steps:
+     * 1. Create the URL with an invalid API token of a shorter length
+     * 2. Execute the reponse
+     * 3. Verify that an error response of 401 was returned by the server
+     *
+     * Expected Result: An error code of 401 was returned
+     */
     @Test
     public void invalidShortAPIToken()
     {
@@ -170,6 +211,18 @@ public class MovieDbAPITest {
 
     }
 
+
+    /**
+     * This test checks to make sure an error is given when an invalid API key is passed with the request that is longer in length
+     * than a valid API token.
+     *
+     * Steps:
+     * 1. Create the URL with an invalid API token of a longer length
+     * 2. Execute the reponse
+     * 3. Verify that an error response of 401 was returned by the server
+     *
+     * Expected Result: An error code of 401 was returned
+     */
     @Test
     public void invalidLongAPIToken()
     {
@@ -192,6 +245,16 @@ public class MovieDbAPITest {
 
     }
 
+    /**
+     * This test checks to make sure an error is given when No API token is passed with the request
+     *
+     * Steps:
+     * 1. Create the URL with no API token
+     * 2. Execute the reponse
+     * 3. Verify that an error response of 401 was returned by the server
+     *
+     * Expected Result: An error code of 401 was returned
+     */
     @Test
     public void missingRequiredField()
     {
@@ -214,6 +277,20 @@ public class MovieDbAPITest {
 
     }
 
+    /**
+     * This is the same as the basic API test, except executes a bunch of connections at the same time using Threads
+     *
+     * Steps:
+     * 1. Build the URL for person 1245 (Scarlett Johansson) with a valid API Token
+     * 2. Execute the request on a bunch of different threads
+     * 3. Check to make sure a response code of 200 was received for each thread
+     * 4. Verifies that the result contains the "changes" key for each thread
+     * 5. If "changes" item is not empty, checks to make sure it contains a "key" object in the response of each thread
+     *
+     * Expected Results:
+     * Server responds with a 200 status key for Success, and that there is a "changes" key in the results on each of the requests
+     * from each thread
+     */
     @Test
     public void basicAPILoadTest()
     {
@@ -316,6 +393,19 @@ public class MovieDbAPITest {
     }
 
 
+    /**
+     * This is the same as the basic API test with a valid API token, but also includes empty dates tags, which are optional parameters
+     * Steps:
+     * 1. Build the URL for person 1245 (Scarlett Johansson) with a valid API Token
+     * 2. Add empty "start_date" and "end_date" params
+     * 3. Execute the request
+     * 4. Check to make sure a response code of 200 was received
+     * 5. Verifies that the result contains the "changes" key
+     * 6. If "changes" item is not empty, checks to make sure it contains a "key" object in the response
+     *
+     * Expected Results:
+     * Server responds with a 200 status key for Success, and that there is a "changes" key in the results.
+     */
     @Test
     public void emptyDatesTag()
     {
@@ -355,6 +445,19 @@ public class MovieDbAPITest {
     }
 
 
+    /**
+     * This is the same as the basic API test with a valid API token, but also includes a different language param, which is optional
+     * Steps:
+     * 1. Build the URL for person 1245 (Scarlett Johansson) with a valid API Token
+     * 2. Add a language of "es-MX" which is Mexico Spanish
+     * 3. Execute the request
+     * 4. Check to make sure a response code of 200 was received
+     * 5. Verifies that the result contains the "changes" key
+     * 6. If "changes" item is not empty, checks to make sure it contains a "key" object in the response
+     *
+     * Expected Results:
+     * Server responds with a 200 status key for Success, and that there is a "changes" key in the results.
+     */
     @Test
     public void differentLanguageTest()
     {
@@ -398,8 +501,6 @@ public class MovieDbAPITest {
                 Assert.assertTrue("API result is missing the 'key' object in the response.", keys.containsKey("key"));
             }
 
-
-
         }
         catch(Exception ex)
         {
@@ -409,6 +510,19 @@ public class MovieDbAPITest {
     }
 
 
+    /**
+     * This is the same as the basic API test with a valid API token, but also includes an empty language param, which is optional
+     * Steps:
+     * 1. Build the URL for person 1245 (Scarlett Johansson) with a valid API Token
+     * 2. Add an empty language parameter
+     * 3. Execute the request
+     * 4. Check to make sure a response code of 200 was received
+     * 5. Verifies that the result contains the "changes" key
+     * 6. If "changes" item is not empty, checks to make sure it contains a "key" object in the response
+     *
+     * Expected Results:
+     * Server responds with a 200 status key for Success, and that there is a "changes" key in the results.
+     */
     @Test
     public void emptyLanguageTest()
     {
@@ -462,6 +576,19 @@ public class MovieDbAPITest {
 
     }
 
+    /**
+     * This is the same as the basic API test with a valid API token, but also includes an invalid language code,
+     * Steps:
+     * 1. Build the URL for person 1245 (Scarlett Johansson) with a valid API Token
+     * 2. Add an invalid language parameter of XX
+     * 3. Execute the request
+     * 4. Check to make sure a response code of 200 was received
+     * 5. Verifies that the result contains the "changes" key
+     * 6. If "changes" item is not empty, checks to make sure it contains a "key" object in the response
+     *
+     * Expected Results:
+     * Server responds with a 200 status key for Success, and that there is a "changes" key in the results.
+     */
     @Test
     public void invalidLanguageTest()
     {
@@ -504,9 +631,6 @@ public class MovieDbAPITest {
 
                 Assert.assertTrue("API result is missing the 'key' object in the response.", keys.containsKey("key"));
             }
-
-
-
         }
         catch(Exception ex)
         {
