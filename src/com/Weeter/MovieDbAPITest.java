@@ -1,11 +1,10 @@
 package Weeter;
 
-import junit.framework.Assert;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Test;
+import org.junit.*;
 import com.google.gson.*;
 
 import java.io.BufferedReader;
