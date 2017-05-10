@@ -4,14 +4,18 @@ import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.runner.RunWith;
 import org.junit.*;
 import com.google.gson.*;
+import org.junit.runners.JUnit4;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 
 public class MovieDbAPITest {
 
