@@ -21,8 +21,8 @@ public class MovieDbAPITest {
     private static final String BASEURL = "https://api.themoviedb.org/3/";
     private static final String TOKENPARAM = "?api_key=" + APITOKEN;
 
-    // I originally tried this higher, however it appears that there is a limit to the number of open connections allowed per API token in a short period of time.
-    private static final int LOAD_LIMIT = 30;
+    // Setting this any hire results in a 429 Too Many Requests error on subsequent tests.
+    private static final int LOAD_LIMIT = 29;
 
 
     private volatile boolean hasFailed = false;
@@ -89,6 +89,43 @@ public class MovieDbAPITest {
         catch(Exception ex)
         {
             Assert.fail("An exception was thrown in basicAPIRequiredFields. Err: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * This is the same as the basic API test with a valid API token, but also includes invalid dates tags, which are optional parameters
+     * Steps:
+     * 1. Build the URL for person 1245 (Scarlett Johansson) with a valid API Token
+     * 2. Add invalid "start_date" and "end_date" params
+     * 3. Execute the request
+     * 4. Check to make sure a response code of 500 was received
+     *
+     * Expected Results:
+     * Server responds with a 500 error status key
+     *
+     * *** NOTE: This probably should be fixed to handle this situation more gracefully ***
+     */
+    @Test
+    public void invalidDatesTag()
+    {
+        try {
+
+            String startDateToken = "&start_date=NOT_A_DATE";
+            String endDateToken = "&end_date=NOT_A_DATE";
+
+            HttpClient client = HttpClientBuilder.create().build();
+
+            // Generate URL
+            HttpGet request = new HttpGet(BASEURL + "person/1245/changes" + TOKENPARAM + startDateToken + endDateToken);
+
+            HttpResponse response = client.execute(request);
+
+            Assert.assertEquals("The Movie DB API did not return the expected error response. Status returned: " + response.getStatusLine().getStatusCode(), 500, response.getStatusLine().getStatusCode());
+
+        }
+        catch(Exception ex)
+        {
+            Assert.fail("An exception was thrown in invalidDatesTag. Err: " + ex.getMessage());
         }
 
     }
